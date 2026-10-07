@@ -2,7 +2,7 @@
 
 /* =========================================
    SMARTFIX BUSINESS & CAREER SOLUTIONS
-   MAIN JAVASCRIPT
+   FINAL JAVASCRIPT
 ========================================= */
 
 
@@ -22,7 +22,7 @@ const navbar = document.getElementById("navbar");
 
 if (menuToggle && navbar) {
 
-    menuToggle.addEventListener("click", () => {
+    menuToggle.addEventListener("click", function () {
 
         navbar.classList.toggle("open");
         menuToggle.classList.toggle("active");
@@ -31,9 +31,9 @@ if (menuToggle && navbar) {
 
     const navLinks = document.querySelectorAll(".nav-link");
 
-    navLinks.forEach((link) => {
+    navLinks.forEach(function (link) {
 
-        link.addEventListener("click", () => {
+        link.addEventListener("click", function () {
 
             navbar.classList.remove("open");
             menuToggle.classList.remove("active");
@@ -76,46 +76,37 @@ handleHeaderScroll();
    ACTIVE NAVIGATION
 ========================================= */
 
-const sections =
-    document.querySelectorAll("main section[id]");
-
-const navigationLinks =
-    document.querySelectorAll(".nav-link");
-
+const sections = document.querySelectorAll("main section[id]");
+const navigationLinks = document.querySelectorAll(".nav-link");
 
 function updateActiveNavigation() {
 
     let currentSection = "";
 
-    sections.forEach((section) => {
+    sections.forEach(function (section) {
 
-        const sectionTop =
-            section.offsetTop - 180;
-
-        const sectionHeight =
-            section.offsetHeight;
+        const sectionTop = section.offsetTop - 180;
+        const sectionHeight = section.offsetHeight;
 
         if (
             window.scrollY >= sectionTop &&
             window.scrollY < sectionTop + sectionHeight
         ) {
 
-            currentSection =
-                section.getAttribute("id");
+            currentSection = section.getAttribute("id");
 
         }
 
     });
 
 
-    navigationLinks.forEach((link) => {
+    navigationLinks.forEach(function (link) {
 
         link.classList.remove("active");
 
-        const href =
-            link.getAttribute("href");
+        const href = link.getAttribute("href");
 
-        if (href === `#${currentSection}`) {
+        if (href === "#" + currentSection) {
 
             link.classList.add("active");
 
@@ -125,10 +116,7 @@ function updateActiveNavigation() {
 
 }
 
-window.addEventListener(
-    "scroll",
-    updateActiveNavigation
-);
+window.addEventListener("scroll", updateActiveNavigation);
 
 updateActiveNavigation();
 
@@ -137,302 +125,239 @@ updateActiveNavigation();
    CURRENT YEAR
 ========================================= */
 
-const currentYear =
-    document.getElementById("currentYear");
+const currentYear = document.getElementById("currentYear");
 
 if (currentYear) {
 
-    currentYear.textContent =
-        new Date().getFullYear();
+    currentYear.textContent = new Date().getFullYear();
 
 }
 
 
 /* =========================================
-   HELPER
+   SHOW FORM MESSAGE
+========================================= */
+
+function showMessage(element, message, type) {
+
+    if (!element) return;
+
+    element.textContent = message;
+
+    if (type === "error") {
+
+        element.style.color = "#f87171";
+
+    } else {
+
+        element.style.color = "#86efac";
+
+    }
+
+}
+
+
+/* =========================================
    OPEN WHATSAPP
 ========================================= */
 
 function openWhatsApp(message) {
 
+    const encodedMessage = encodeURIComponent(message);
+
     const whatsappURL =
-        `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(message)}`;
+        "https://wa.me/" +
+        WHATSAPP_NUMBER +
+        "?text=" +
+        encodedMessage;
+
 
     /*
-     * Try opening WhatsApp in a new tab/window.
-     * If browser blocks it, fallback to same tab.
-     */
+       IMPORTANT:
+       Direct location redirect is used instead
+       of window.open().
 
-    const newWindow =
-        window.open(
-            whatsappURL,
-            "_blank",
-            "noopener,noreferrer"
-        );
+       This works better on mobile browsers,
+       Android, iPhone and desktop browsers.
+    */
 
-    if (!newWindow) {
-
-        window.location.href =
-            whatsappURL;
-
-    }
-
-}
-
-
-/* =========================================
-   FORM MESSAGE HELPER
-========================================= */
-
-function showMessage(
-    element,
-    message,
-    type = "success"
-) {
-
-    if (!element) return;
-
-    element.textContent =
-        message;
-
-    if (type === "error") {
-
-        element.style.color =
-            "#f87171";
-
-    } else {
-
-        element.style.color =
-            "#86efac";
-
-    }
+    window.location.href = whatsappURL;
 
 }
 
 
 /* =========================================
    CONTACT FORM
-   SEND DETAILS TO WHATSAPP
+   SEND TO WHATSAPP
 ========================================= */
 
-const contactForm =
-    document.getElementById("contactForm");
-
-const formMessage =
-    document.getElementById("formMessage");
-
+const contactForm = document.getElementById("contactForm");
+const formMessage = document.getElementById("formMessage");
 
 if (contactForm) {
 
-    contactForm.addEventListener(
-        "submit",
-        function (event) {
+    contactForm.addEventListener("submit", function (event) {
 
-            event.preventDefault();
-            event.stopPropagation();
+        event.preventDefault();
+        event.stopPropagation();
 
 
-            /* =====================================
-               GET INPUTS
-            ===================================== */
+        /* =====================================
+           GET INPUTS
+        ===================================== */
 
-            const nameInput =
-                document.getElementById("name");
-
-            const phoneInput =
-                document.getElementById("phone");
-
-            const serviceInput =
-                document.getElementById("service");
-
-            const messageInput =
-                document.getElementById("message");
+        const nameInput = document.getElementById("name");
+        const phoneInput = document.getElementById("phone");
+        const serviceInput = document.getElementById("service");
+        const messageInput = document.getElementById("message");
 
 
-            const name =
-                nameInput?.value.trim() || "";
+        /* =====================================
+           GET VALUES
+        ===================================== */
 
-            const phone =
-                phoneInput?.value.trim() || "";
+        const name =
+            nameInput ? nameInput.value.trim() : "";
 
-            const message =
-                messageInput?.value.trim() || "";
+        const phone =
+            phoneInput ? phoneInput.value.trim() : "";
 
+        const service =
+            serviceInput ? serviceInput.value.trim() : "";
 
-            /* =====================================
-               VALIDATION
-            ===================================== */
-
-            if (!name) {
-
-                showMessage(
-                    formMessage,
-                    "Please enter your name.",
-                    "error"
-                );
-
-                nameInput?.focus();
-
-                return;
-
-            }
+        const message =
+            messageInput ? messageInput.value.trim() : "";
 
 
-            if (!phone) {
+        /* =====================================
+           VALIDATION
+        ===================================== */
 
-                showMessage(
-                    formMessage,
-                    "Please enter your phone number.",
-                    "error"
-                );
+        if (!name) {
 
-                phoneInput?.focus();
+            showMessage(
+                formMessage,
+                "Please enter your name.",
+                "error"
+            );
 
-                return;
+            if (nameInput) nameInput.focus();
 
-            }
+            return;
 
-
-            if (
-                !serviceInput ||
-                !serviceInput.value
-            ) {
-
-                showMessage(
-                    formMessage,
-                    "Please select a service.",
-                    "error"
-                );
-
-                serviceInput?.focus();
-
-                return;
-
-            }
+        }
 
 
-            const phoneDigits =
-                phone.replace(/\D/g, "");
+        if (!phone) {
+
+            showMessage(
+                formMessage,
+                "Please enter your phone number.",
+                "error"
+            );
+
+            if (phoneInput) phoneInput.focus();
+
+            return;
+
+        }
 
 
-            if (phoneDigits.length < 7) {
+        if (!service) {
 
-                showMessage(
-                    formMessage,
-                    "Please enter a valid phone number.",
-                    "error"
-                );
+            showMessage(
+                formMessage,
+                "Please select a service.",
+                "error"
+            );
 
-                phoneInput?.focus();
+            if (serviceInput) serviceInput.focus();
 
-                return;
+            return;
 
-            }
-
-
-            /* =====================================
-               SERVICE NAME
-            ===================================== */
-
-            let serviceName =
-                "Not specified";
-
-            if (
-                serviceInput &&
-                serviceInput.selectedIndex >= 0
-            ) {
-
-                const selectedOption =
-                    serviceInput.options[
-                        serviceInput.selectedIndex
-                    ];
-
-                serviceName =
-                    selectedOption?.text.trim() ||
-                    serviceInput.value;
-
-            }
+        }
 
 
-            /* =====================================
-               WHATSAPP MESSAGE
-            ===================================== */
+        const phoneDigits = phone.replace(/\D/g, "");
 
-            const whatsappMessage =
+        if (phoneDigits.length < 7) {
+
+            showMessage(
+                formMessage,
+                "Please enter a valid phone number.",
+                "error"
+            );
+
+            if (phoneInput) phoneInput.focus();
+
+            return;
+
+        }
+
+
+        /* =====================================
+           CREATE CONTACT WHATSAPP MESSAGE
+        ===================================== */
+
+        const whatsappMessage =
 `Hello Imran,
 
-I would like to request a service from SmartFix Business & Career Solutions.
+I would like to enquire about a service from SmartFix Business & Career Solutions.
 
-━━━━━━━━━━━━━━━━━━
+━━━━━━━━━━━━━━━━━━━━
 CUSTOMER DETAILS
-━━━━━━━━━━━━━━━━━━
+━━━━━━━━━━━━━━━━━━━━
 
 Name: ${name}
 
 Phone: ${phone}
 
-Service Required: ${serviceName}
+Service Required: ${service}
 
 Requirement:
 ${message || "Not mentioned"}
 
-━━━━━━━━━━━━━━━━━━
+━━━━━━━━━━━━━━━━━━━━
 
-Please contact me regarding this requirement.
+Please contact me regarding my requirement.
 
 Thank you.`;
 
 
-            /* =====================================
-               BUTTON
-            ===================================== */
+        /* =====================================
+           BUTTON
+        ===================================== */
 
-            const submitButton =
-                contactForm.querySelector(
-                    'button[type="submit"]'
-                );
+        const submitButton =
+            contactForm.querySelector('button[type="submit"]');
 
 
-            if (submitButton) {
+        if (submitButton) {
 
-                submitButton.disabled = true;
+            submitButton.disabled = true;
 
-                submitButton.textContent =
-                    "Opening WhatsApp...";
-
-            }
-
-
-            showMessage(
-                formMessage,
-                "Opening WhatsApp...",
-                "success"
-            );
-
-
-            /* =====================================
-               OPEN WHATSAPP
-            ===================================== */
-
-            setTimeout(() => {
-
-                openWhatsApp(
-                    whatsappMessage
-                );
-
-                if (submitButton) {
-
-                    submitButton.disabled = false;
-
-                    submitButton.textContent =
-                        "Send Enquiry on WhatsApp";
-
-                }
-
-            }, 200);
+            submitButton.textContent =
+                "Opening WhatsApp...";
 
         }
-    );
+
+
+        showMessage(
+            formMessage,
+            "Opening WhatsApp...",
+            "success"
+        );
+
+
+        /*
+           Direct redirect.
+           No setTimeout.
+           No window.open.
+        */
+
+        openWhatsApp(whatsappMessage);
+
+    });
 
 }
 
@@ -442,199 +367,185 @@ Thank you.`;
    SEND COMPLETE CV REQUEST TO WHATSAPP
 ========================================= */
 
-const cvForm =
-    document.getElementById("cvForm");
-
-const cvFormMessage =
-    document.getElementById("cvFormMessage");
+const cvForm = document.getElementById("cvForm");
+const cvFormMessage = document.getElementById("cvFormMessage");
 
 
 if (cvForm) {
 
-    cvForm.addEventListener(
-        "submit",
-        function (event) {
+    cvForm.addEventListener("submit", function (event) {
 
-            /*
-             * VERY IMPORTANT
-             * Prevent normal browser form submit.
-             */
+        event.preventDefault();
+        event.stopPropagation();
 
-            event.preventDefault();
-            event.stopPropagation();
 
+        /* =====================================
+           GET ALL CV INPUTS
+        ===================================== */
 
-            /* =====================================
-               GET ALL CV INPUTS
-            ===================================== */
+        const cvName =
+            document.getElementById("cvName");
 
-            const cvName =
-                document.getElementById("cvName");
+        const cvPhone =
+            document.getElementById("cvPhone");
 
-            const cvPhone =
-                document.getElementById("cvPhone");
+        const cvEmail =
+            document.getElementById("cvEmail");
 
-            const cvEmail =
-                document.getElementById("cvEmail");
+        const cvLocation =
+            document.getElementById("cvLocation");
 
-            const cvLocation =
-                document.getElementById("cvLocation");
+        const cvJob =
+            document.getElementById("cvJob");
 
-            const cvJob =
-                document.getElementById("cvJob");
+        const cvExperience =
+            document.getElementById("cvExperience");
 
-            const cvExperience =
-                document.getElementById("cvExperience");
+        const cvEducation =
+            document.getElementById("cvEducation");
 
-            const cvEducation =
-                document.getElementById("cvEducation");
+        const cvWork =
+            document.getElementById("cvWork");
 
-            const cvWork =
-                document.getElementById("cvWork");
+        const cvSkills =
+            document.getElementById("cvSkills");
 
-            const cvSkills =
-                document.getElementById("cvSkills");
+        const cvLanguages =
+            document.getElementById("cvLanguages");
 
-            const cvLanguages =
-                document.getElementById("cvLanguages");
+        const cvCertifications =
+            document.getElementById("cvCertifications");
 
-            const cvCertifications =
-                document.getElementById("cvCertifications");
+        const cvStyle =
+            document.getElementById("cvStyle");
 
-            const cvStyle =
-                document.getElementById("cvStyle");
+        const cvUrgency =
+            document.getElementById("cvUrgency");
 
-            const cvUrgency =
-                document.getElementById("cvUrgency");
+        const cvMessage =
+            document.getElementById("cvMessage");
 
-            const cvMessage =
-                document.getElementById("cvMessage");
 
+        /* =====================================
+           GET VALUES SAFELY
+        ===================================== */
 
-            /* =====================================
-               GET VALUES
-            ===================================== */
+        const name =
+            cvName ? cvName.value.trim() : "";
 
-            const name =
-                cvName?.value.trim() || "";
+        const phone =
+            cvPhone ? cvPhone.value.trim() : "";
 
-            const phone =
-                cvPhone?.value.trim() || "";
+        const email =
+            cvEmail ? cvEmail.value.trim() : "";
 
-            const email =
-                cvEmail?.value.trim() || "";
+        const location =
+            cvLocation ? cvLocation.value.trim() : "";
 
-            const location =
-                cvLocation?.value.trim() || "";
+        const job =
+            cvJob ? cvJob.value.trim() : "";
 
-            const job =
-                cvJob?.value.trim() || "";
+        const experience =
+            cvExperience ? cvExperience.value.trim() : "";
 
-            const experience =
-                cvExperience?.value.trim() || "";
+        const education =
+            cvEducation ? cvEducation.value.trim() : "";
 
-            const education =
-                cvEducation?.value.trim() || "";
+        const work =
+            cvWork ? cvWork.value.trim() : "";
 
-            const work =
-                cvWork?.value.trim() || "";
+        const skills =
+            cvSkills ? cvSkills.value.trim() : "";
 
-            const skills =
-                cvSkills?.value.trim() || "";
+        const languages =
+            cvLanguages ? cvLanguages.value.trim() : "";
 
-            const languages =
-                cvLanguages?.value.trim() || "";
+        const certifications =
+            cvCertifications ? cvCertifications.value.trim() : "";
 
-            const certifications =
-                cvCertifications?.value.trim() || "";
+        const style =
+            cvStyle ? cvStyle.value.trim() : "";
 
-            const style =
-                cvStyle?.value.trim() || "";
+        const urgency =
+            cvUrgency ? cvUrgency.value.trim() : "";
 
-            const urgency =
-                cvUrgency?.value.trim() || "";
+        const additionalMessage =
+            cvMessage ? cvMessage.value.trim() : "";
 
-            const additionalMessage =
-                cvMessage?.value.trim() || "";
 
+        /* =====================================
+           REQUIRED VALIDATION
+        ===================================== */
 
-            /* =====================================
-               REQUIRED FIELD VALIDATION
-            ===================================== */
+        if (!name) {
 
-            if (!name) {
+            showMessage(
+                cvFormMessage,
+                "Please enter your full name.",
+                "error"
+            );
 
-                showMessage(
-                    cvFormMessage,
-                    "Please enter your full name.",
-                    "error"
-                );
+            if (cvName) cvName.focus();
 
-                cvName?.focus();
+            return;
 
-                return;
+        }
 
-            }
 
+        if (!phone) {
 
-            if (!phone) {
+            showMessage(
+                cvFormMessage,
+                "Please enter your phone number.",
+                "error"
+            );
 
-                showMessage(
-                    cvFormMessage,
-                    "Please enter your phone number.",
-                    "error"
-                );
+            if (cvPhone) cvPhone.focus();
 
-                cvPhone?.focus();
+            return;
 
-                return;
+        }
 
-            }
 
+        if (!job) {
 
-            if (!job) {
+            showMessage(
+                cvFormMessage,
+                "Please enter your target job / position.",
+                "error"
+            );
 
-                showMessage(
-                    cvFormMessage,
-                    "Please enter your target job / position.",
-                    "error"
-                );
+            if (cvJob) cvJob.focus();
 
-                cvJob?.focus();
+            return;
 
-                return;
+        }
 
-            }
 
+        const phoneDigits =
+            phone.replace(/\D/g, "");
 
-            /* =====================================
-               PHONE VALIDATION
-            ===================================== */
 
-            const phoneDigits =
-                phone.replace(/\D/g, "");
+        if (phoneDigits.length < 7) {
 
+            showMessage(
+                cvFormMessage,
+                "Please enter a valid phone number.",
+                "error"
+            );
 
-            if (phoneDigits.length < 7) {
+            if (cvPhone) cvPhone.focus();
 
-                showMessage(
-                    cvFormMessage,
-                    "Please enter a valid phone number.",
-                    "error"
-                );
+            return;
 
-                cvPhone?.focus();
+        }
 
-                return;
 
-            }
+        /* =====================================
+           CREATE CV WHATSAPP MESSAGE
+        ===================================== */
 
-
-            /* =====================================
-               CREATE CV WHATSAPP MESSAGE
-            ===================================== */
-
-            const cvWhatsappMessage =
+        const cvWhatsappMessage =
 `Hello Imran,
 
 I would like to request a Professional CV / Resume from SmartFix Business & Career Solutions.
@@ -644,57 +555,74 @@ CV REQUEST DETAILS
 ━━━━━━━━━━━━━━━━━━━━
 
 PERSONAL INFORMATION
---------------------
-Full Name: ${name}
+━━━━━━━━━━━━━━━━━━━━
 
-Phone: ${phone}
+Full Name:
+${name}
 
-Email: ${email || "Not provided"}
+Phone:
+${phone}
 
-City / Location: ${location || "Not provided"}
+Email:
+${email || "Not provided"}
+
+City / Location:
+${location || "Not provided"}
 
 
 CAREER DETAILS
---------------------
-Target Job / Position: ${job}
+━━━━━━━━━━━━━━━━━━━━
 
-Experience: ${experience || "Not specified"}
+Target Job / Position:
+${job}
+
+Experience:
+${experience || "Not specified"}
 
 
 EDUCATION
---------------------
+━━━━━━━━━━━━━━━━━━━━
+
 ${education || "Not provided"}
 
 
 WORK EXPERIENCE
---------------------
+━━━━━━━━━━━━━━━━━━━━
+
 ${work || "Not provided"}
 
 
 SKILLS
---------------------
+━━━━━━━━━━━━━━━━━━━━
+
 ${skills || "Not provided"}
 
 
 LANGUAGES
---------------------
+━━━━━━━━━━━━━━━━━━━━
+
 ${languages || "Not provided"}
 
 
 CERTIFICATIONS / ADDITIONAL DETAILS
---------------------
+━━━━━━━━━━━━━━━━━━━━
+
 ${certifications || "Not provided"}
 
 
 CV PREFERENCE
---------------------
-CV Style: ${style || "Not specified"}
+━━━━━━━━━━━━━━━━━━━━
 
-Delivery Requirement: ${urgency || "Not specified"}
+CV Style:
+${style || "Not specified"}
+
+Delivery Requirement:
+${urgency || "Not specified"}
 
 
 ADDITIONAL MESSAGE
---------------------
+━━━━━━━━━━━━━━━━━━━━
+
 ${additionalMessage || "No additional message"}
 
 ━━━━━━━━━━━━━━━━━━━━
@@ -704,171 +632,128 @@ Please review my details and let me know the next steps, pricing and delivery ti
 Thank you.`;
 
 
-            /* =====================================
-               GET CV SUBMIT BUTTON
-            ===================================== */
+        /* =====================================
+           GET SUBMIT BUTTON
+        ===================================== */
 
-            const cvSubmitButton =
-                cvForm.querySelector(
-                    'button[type="submit"]'
-                );
+        const cvSubmitButton =
+            cvForm.querySelector('button[type="submit"]');
 
 
-            /* =====================================
-               BUTTON LOADING
-            ===================================== */
+        if (cvSubmitButton) {
 
-            if (cvSubmitButton) {
+            cvSubmitButton.disabled = true;
 
-                cvSubmitButton.disabled = true;
-
-                cvSubmitButton.textContent =
-                    "Opening WhatsApp...";
-
-            }
-
-
-            /* =====================================
-               SUCCESS MESSAGE
-            ===================================== */
-
-            showMessage(
-                cvFormMessage,
-                "Opening WhatsApp with your CV details...",
-                "success"
-            );
-
-
-            /* =====================================
-               OPEN WHATSAPP
-            ===================================== */
-
-            setTimeout(() => {
-
-                openWhatsApp(
-                    cvWhatsappMessage
-                );
-
-
-                if (cvSubmitButton) {
-
-                    cvSubmitButton.disabled = false;
-
-                    cvSubmitButton.textContent =
-                        "Send CV Request on WhatsApp";
-
-                }
-
-            }, 200);
+            cvSubmitButton.textContent =
+                "Opening WhatsApp...";
 
         }
-    );
+
+
+        /* =====================================
+           SHOW MESSAGE
+        ===================================== */
+
+        showMessage(
+            cvFormMessage,
+            "Opening WhatsApp...",
+            "success"
+        );
+
+
+        /* =====================================
+           OPEN WHATSAPP DIRECTLY
+        ===================================== */
+
+        openWhatsApp(cvWhatsappMessage);
+
+    });
 
 }
 
 
 /* =========================================
-   PHONE INPUT - CONTACT FORM
+   PHONE INPUT - CONTACT
 ========================================= */
 
 const phoneInput =
     document.getElementById("phone");
 
-
 if (phoneInput) {
 
-    phoneInput.addEventListener(
-        "input",
-        () => {
+    phoneInput.addEventListener("input", function () {
 
-            phoneInput.value =
-                phoneInput.value.replace(
-                    /[^\d+\-\s()]/g,
-                    ""
-                );
+        this.value =
+            this.value.replace(
+                /[^\d+\-\s()]/g,
+                ""
+            );
 
-        }
-    );
+    });
 
 }
 
 
 /* =========================================
-   PHONE INPUT - CV FORM
+   PHONE INPUT - CV
 ========================================= */
 
 const cvPhoneInput =
     document.getElementById("cvPhone");
 
-
 if (cvPhoneInput) {
 
-    cvPhoneInput.addEventListener(
-        "input",
-        () => {
+    cvPhoneInput.addEventListener("input", function () {
 
-            cvPhoneInput.value =
-                cvPhoneInput.value.replace(
-                    /[^\d+\-\s()]/g,
-                    ""
-                );
+        this.value =
+            this.value.replace(
+                /[^\d+\-\s()]/g,
+                ""
+            );
 
-        }
-    );
+    });
 
 }
 
 
 /* =========================================
    ESCAPE KEY
-   CLOSE MOBILE MENU
 ========================================= */
 
-document.addEventListener(
-    "keydown",
-    (event) => {
+document.addEventListener("keydown", function (event) {
 
-        if (event.key === "Escape") {
+    if (event.key === "Escape") {
 
-            if (navbar) {
+        if (navbar) {
 
-                navbar.classList.remove(
-                    "open"
-                );
+            navbar.classList.remove("open");
 
-            }
+        }
 
+        if (menuToggle) {
 
-            if (menuToggle) {
-
-                menuToggle.classList.remove(
-                    "active"
-                );
-
-            }
+            menuToggle.classList.remove("active");
 
         }
 
     }
-);
+
+});
 
 
 /* =========================================
-   PREVENT EMPTY ANCHOR JUMP
+   PREVENT EMPTY ANCHOR
 ========================================= */
 
 document
     .querySelectorAll('a[href="#"]')
-    .forEach((link) => {
+    .forEach(function (link) {
 
-        link.addEventListener(
-            "click",
-            (event) => {
+        link.addEventListener("click", function (event) {
 
-                event.preventDefault();
+            event.preventDefault();
 
-            }
-        );
+        });
 
     });
 
@@ -878,57 +763,45 @@ document
 ========================================= */
 
 document
-    .querySelectorAll(
-        'a[href^="#"]:not([href="#"])'
-    )
-    .forEach((link) => {
+    .querySelectorAll('a[href^="#"]:not([href="#"])')
+    .forEach(function (link) {
 
-        link.addEventListener(
-            "click",
-            function (event) {
+        link.addEventListener("click", function (event) {
 
-                const targetId =
-                    this.getAttribute("href");
+            const targetId =
+                this.getAttribute("href");
 
+            const target =
+                document.querySelector(targetId);
 
-                const target =
-                    document.querySelector(
-                        targetId
-                    );
+            if (!target) return;
 
+            event.preventDefault();
 
-                if (!target) return;
+            const headerHeight =
+                header ? header.offsetHeight : 80;
 
-
-                event.preventDefault();
-
-
-                const headerHeight =
-                    header?.offsetHeight || 80;
+            const targetPosition =
+                target.getBoundingClientRect().top +
+                window.pageYOffset -
+                headerHeight;
 
 
-                const targetPosition =
-                    target.getBoundingClientRect().top +
-                    window.pageYOffset -
-                    headerHeight;
+            window.scrollTo({
 
+                top: targetPosition,
 
-                window.scrollTo({
+                behavior: "smooth"
 
-                    top: targetPosition,
+            });
 
-                    behavior: "smooth"
-
-                });
-
-            }
-        );
+        });
 
     });
 
 
 /* =========================================
-   SCROLL REVEAL ANIMATION
+   SCROLL REVEAL
 ========================================= */
 
 const revealElements =
@@ -953,21 +826,18 @@ if ("IntersectionObserver" in window) {
 
     const revealObserver =
         new IntersectionObserver(
-            (entries, observer) => {
+            function (entries, observer) {
 
-                entries.forEach((entry) => {
+                entries.forEach(function (entry) {
 
                     if (entry.isIntersecting) {
 
-                        entry.target.style.opacity =
-                            "1";
+                        entry.target.style.opacity = "1";
 
                         entry.target.style.transform =
                             "translateY(0)";
 
-                        observer.unobserve(
-                            entry.target
-                        );
+                        observer.unobserve(entry.target);
 
                     }
 
@@ -980,10 +850,9 @@ if ("IntersectionObserver" in window) {
         );
 
 
-    revealElements.forEach((element) => {
+    revealElements.forEach(function (element) {
 
-        element.style.opacity =
-            "0";
+        element.style.opacity = "0";
 
         element.style.transform =
             "translateY(25px)";
@@ -991,9 +860,7 @@ if ("IntersectionObserver" in window) {
         element.style.transition =
             "opacity 0.7s ease, transform 0.7s ease";
 
-        revealObserver.observe(
-            element
-        );
+        revealObserver.observe(element);
 
     });
 
@@ -1001,14 +868,13 @@ if ("IntersectionObserver" in window) {
 
 
 /* =========================================
-   CONSOLE BRAND MESSAGE
+   CONSOLE MESSAGE
 ========================================= */
 
 console.log(
     "%cSmartFix Business & Career Solutions",
     "color:#38bdf8;font-size:20px;font-weight:bold;"
 );
-
 
 console.log(
     "%cCV • Excel • Word • Business Analysis • Documents • Digital Services",
