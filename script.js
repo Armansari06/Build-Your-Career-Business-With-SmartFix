@@ -1,9 +1,16 @@
 "use strict";
 
 /* =========================================
-   SMART OFFICE & CV SOLUTIONS
-   Main JavaScript
+   SMARTFIX BUSINESS & CAREER SOLUTIONS
+   MAIN JAVASCRIPT
 ========================================= */
+
+
+/* =========================================
+   WHATSAPP CONFIGURATION
+========================================= */
+
+const WHATSAPP_NUMBER = "919918684894";
 
 
 /* =========================================
@@ -142,7 +149,69 @@ if (currentYear) {
 
 
 /* =========================================
-   CONTACT / SERVICE FORM
+   HELPER
+   OPEN WHATSAPP
+========================================= */
+
+function openWhatsApp(message) {
+
+    const whatsappURL =
+        `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(message)}`;
+
+    /*
+     * Try opening WhatsApp in a new tab/window.
+     * If browser blocks it, fallback to same tab.
+     */
+
+    const newWindow =
+        window.open(
+            whatsappURL,
+            "_blank",
+            "noopener,noreferrer"
+        );
+
+    if (!newWindow) {
+
+        window.location.href =
+            whatsappURL;
+
+    }
+
+}
+
+
+/* =========================================
+   FORM MESSAGE HELPER
+========================================= */
+
+function showMessage(
+    element,
+    message,
+    type = "success"
+) {
+
+    if (!element) return;
+
+    element.textContent =
+        message;
+
+    if (type === "error") {
+
+        element.style.color =
+            "#f87171";
+
+    } else {
+
+        element.style.color =
+            "#86efac";
+
+    }
+
+}
+
+
+/* =========================================
+   CONTACT FORM
    SEND DETAILS TO WHATSAPP
 ========================================= */
 
@@ -153,60 +222,18 @@ const formMessage =
     document.getElementById("formMessage");
 
 
-/*
-    WhatsApp Number
-
-    Old:
-    +919170688077
-
-    New:
-    +919918684894
-
-    WhatsApp URL ke liye + sign nahi chahiye.
-*/
-
-const WHATSAPP_NUMBER = "919918684894";
-
-
-/*
-    Prevent multiple submissions
-*/
-
-let formSubmitted = false;
-
-
 if (contactForm) {
 
     contactForm.addEventListener(
         "submit",
         function (event) {
 
-            /*
-             * IMPORTANT:
-             * Browser ka default form submission
-             * completely stop karo.
-             *
-             * Isse page reload nahi hoga.
-             */
-
             event.preventDefault();
-
             event.stopPropagation();
 
 
             /* =====================================
-               PREVENT DOUBLE SUBMISSION
-            ===================================== */
-
-            if (formSubmitted) {
-
-                return;
-
-            }
-
-
-            /* =====================================
-               GET FORM ELEMENTS
+               GET INPUTS
             ===================================== */
 
             const nameInput =
@@ -222,10 +249,6 @@ if (contactForm) {
                 document.getElementById("message");
 
 
-            /* =====================================
-               GET FORM VALUES
-            ===================================== */
-
             const name =
                 nameInput?.value.trim() || "";
 
@@ -237,12 +260,13 @@ if (contactForm) {
 
 
             /* =====================================
-               VALIDATE NAME
+               VALIDATION
             ===================================== */
 
             if (!name) {
 
-                showFormMessage(
+                showMessage(
+                    formMessage,
                     "Please enter your name.",
                     "error"
                 );
@@ -254,13 +278,10 @@ if (contactForm) {
             }
 
 
-            /* =====================================
-               VALIDATE PHONE
-            ===================================== */
-
             if (!phone) {
 
-                showFormMessage(
+                showMessage(
+                    formMessage,
                     "Please enter your phone number.",
                     "error"
                 );
@@ -272,21 +293,314 @@ if (contactForm) {
             }
 
 
-            /* =====================================
-               VALIDATE SERVICE
-            ===================================== */
-
             if (
                 !serviceInput ||
                 !serviceInput.value
             ) {
 
-                showFormMessage(
+                showMessage(
+                    formMessage,
                     "Please select a service.",
                     "error"
                 );
 
                 serviceInput?.focus();
+
+                return;
+
+            }
+
+
+            const phoneDigits =
+                phone.replace(/\D/g, "");
+
+
+            if (phoneDigits.length < 7) {
+
+                showMessage(
+                    formMessage,
+                    "Please enter a valid phone number.",
+                    "error"
+                );
+
+                phoneInput?.focus();
+
+                return;
+
+            }
+
+
+            /* =====================================
+               SERVICE NAME
+            ===================================== */
+
+            let serviceName =
+                "Not specified";
+
+            if (
+                serviceInput &&
+                serviceInput.selectedIndex >= 0
+            ) {
+
+                const selectedOption =
+                    serviceInput.options[
+                        serviceInput.selectedIndex
+                    ];
+
+                serviceName =
+                    selectedOption?.text.trim() ||
+                    serviceInput.value;
+
+            }
+
+
+            /* =====================================
+               WHATSAPP MESSAGE
+            ===================================== */
+
+            const whatsappMessage =
+`Hello Imran,
+
+I would like to request a service from SmartFix Business & Career Solutions.
+
+━━━━━━━━━━━━━━━━━━
+CUSTOMER DETAILS
+━━━━━━━━━━━━━━━━━━
+
+Name: ${name}
+
+Phone: ${phone}
+
+Service Required: ${serviceName}
+
+Requirement:
+${message || "Not mentioned"}
+
+━━━━━━━━━━━━━━━━━━
+
+Please contact me regarding this requirement.
+
+Thank you.`;
+
+
+            /* =====================================
+               BUTTON
+            ===================================== */
+
+            const submitButton =
+                contactForm.querySelector(
+                    'button[type="submit"]'
+                );
+
+
+            if (submitButton) {
+
+                submitButton.disabled = true;
+
+                submitButton.textContent =
+                    "Opening WhatsApp...";
+
+            }
+
+
+            showMessage(
+                formMessage,
+                "Opening WhatsApp...",
+                "success"
+            );
+
+
+            /* =====================================
+               OPEN WHATSAPP
+            ===================================== */
+
+            setTimeout(() => {
+
+                openWhatsApp(
+                    whatsappMessage
+                );
+
+                if (submitButton) {
+
+                    submitButton.disabled = false;
+
+                    submitButton.textContent =
+                        "Send Enquiry on WhatsApp";
+
+                }
+
+            }, 200);
+
+        }
+    );
+
+}
+
+
+/* =========================================
+   CV BUILDER FORM
+   SEND COMPLETE CV REQUEST TO WHATSAPP
+========================================= */
+
+const cvForm =
+    document.getElementById("cvForm");
+
+const cvFormMessage =
+    document.getElementById("cvFormMessage");
+
+
+if (cvForm) {
+
+    cvForm.addEventListener(
+        "submit",
+        function (event) {
+
+            /*
+             * VERY IMPORTANT
+             * Prevent normal browser form submit.
+             */
+
+            event.preventDefault();
+            event.stopPropagation();
+
+
+            /* =====================================
+               GET ALL CV INPUTS
+            ===================================== */
+
+            const cvName =
+                document.getElementById("cvName");
+
+            const cvPhone =
+                document.getElementById("cvPhone");
+
+            const cvEmail =
+                document.getElementById("cvEmail");
+
+            const cvLocation =
+                document.getElementById("cvLocation");
+
+            const cvJob =
+                document.getElementById("cvJob");
+
+            const cvExperience =
+                document.getElementById("cvExperience");
+
+            const cvEducation =
+                document.getElementById("cvEducation");
+
+            const cvWork =
+                document.getElementById("cvWork");
+
+            const cvSkills =
+                document.getElementById("cvSkills");
+
+            const cvLanguages =
+                document.getElementById("cvLanguages");
+
+            const cvCertifications =
+                document.getElementById("cvCertifications");
+
+            const cvStyle =
+                document.getElementById("cvStyle");
+
+            const cvUrgency =
+                document.getElementById("cvUrgency");
+
+            const cvMessage =
+                document.getElementById("cvMessage");
+
+
+            /* =====================================
+               GET VALUES
+            ===================================== */
+
+            const name =
+                cvName?.value.trim() || "";
+
+            const phone =
+                cvPhone?.value.trim() || "";
+
+            const email =
+                cvEmail?.value.trim() || "";
+
+            const location =
+                cvLocation?.value.trim() || "";
+
+            const job =
+                cvJob?.value.trim() || "";
+
+            const experience =
+                cvExperience?.value.trim() || "";
+
+            const education =
+                cvEducation?.value.trim() || "";
+
+            const work =
+                cvWork?.value.trim() || "";
+
+            const skills =
+                cvSkills?.value.trim() || "";
+
+            const languages =
+                cvLanguages?.value.trim() || "";
+
+            const certifications =
+                cvCertifications?.value.trim() || "";
+
+            const style =
+                cvStyle?.value.trim() || "";
+
+            const urgency =
+                cvUrgency?.value.trim() || "";
+
+            const additionalMessage =
+                cvMessage?.value.trim() || "";
+
+
+            /* =====================================
+               REQUIRED FIELD VALIDATION
+            ===================================== */
+
+            if (!name) {
+
+                showMessage(
+                    cvFormMessage,
+                    "Please enter your full name.",
+                    "error"
+                );
+
+                cvName?.focus();
+
+                return;
+
+            }
+
+
+            if (!phone) {
+
+                showMessage(
+                    cvFormMessage,
+                    "Please enter your phone number.",
+                    "error"
+                );
+
+                cvPhone?.focus();
+
+                return;
+
+            }
+
+
+            if (!job) {
+
+                showMessage(
+                    cvFormMessage,
+                    "Please enter your target job / position.",
+                    "error"
+                );
+
+                cvJob?.focus();
 
                 return;
 
@@ -303,12 +617,13 @@ if (contactForm) {
 
             if (phoneDigits.length < 7) {
 
-                showFormMessage(
+                showMessage(
+                    cvFormMessage,
                     "Please enter a valid phone number.",
                     "error"
                 );
 
-                phoneInput?.focus();
+                cvPhone?.focus();
 
                 return;
 
@@ -316,76 +631,85 @@ if (contactForm) {
 
 
             /* =====================================
-               GET SELECTED SERVICE NAME
+               CREATE CV WHATSAPP MESSAGE
             ===================================== */
 
-            let serviceName =
-                "Not specified";
+            const cvWhatsappMessage =
+`Hello Imran,
 
+I would like to request a Professional CV / Resume from SmartFix Business & Career Solutions.
 
-            if (
-                serviceInput &&
-                serviceInput.selectedIndex >= 0
-            ) {
+━━━━━━━━━━━━━━━━━━━━
+CV REQUEST DETAILS
+━━━━━━━━━━━━━━━━━━━━
 
-                const selectedOption =
-                    serviceInput.options[
-                        serviceInput.selectedIndex
-                    ];
-
-
-                serviceName =
-                    selectedOption?.text.trim() ||
-                    serviceInput.value;
-
-            }
-
-
-            /* =====================================
-               CREATE WHATSAPP MESSAGE
-            ===================================== */
-
-            const whatsappMessage =
-`Hello,
-
-I would like to request a service from your business.
-
-━━━━━━━━━━━━━━━━━━
-CUSTOMER DETAILS
-━━━━━━━━━━━━━━━━━━
-
-Name: ${name}
+PERSONAL INFORMATION
+--------------------
+Full Name: ${name}
 
 Phone: ${phone}
 
-Service Required: ${serviceName}
+Email: ${email || "Not provided"}
 
-Requirement / Message:
-${message || "Not mentioned"}
+City / Location: ${location || "Not provided"}
 
-━━━━━━━━━━━━━━━━━━
 
-Please contact me regarding this requirement.
+CAREER DETAILS
+--------------------
+Target Job / Position: ${job}
+
+Experience: ${experience || "Not specified"}
+
+
+EDUCATION
+--------------------
+${education || "Not provided"}
+
+
+WORK EXPERIENCE
+--------------------
+${work || "Not provided"}
+
+
+SKILLS
+--------------------
+${skills || "Not provided"}
+
+
+LANGUAGES
+--------------------
+${languages || "Not provided"}
+
+
+CERTIFICATIONS / ADDITIONAL DETAILS
+--------------------
+${certifications || "Not provided"}
+
+
+CV PREFERENCE
+--------------------
+CV Style: ${style || "Not specified"}
+
+Delivery Requirement: ${urgency || "Not specified"}
+
+
+ADDITIONAL MESSAGE
+--------------------
+${additionalMessage || "No additional message"}
+
+━━━━━━━━━━━━━━━━━━━━
+
+Please review my details and let me know the next steps, pricing and delivery time.
 
 Thank you.`;
 
 
             /* =====================================
-               CREATE WHATSAPP URL
+               GET CV SUBMIT BUTTON
             ===================================== */
 
-            const whatsappURL =
-                `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(
-                    whatsappMessage
-                )}`;
-
-
-            /* =====================================
-               GET SUBMIT BUTTON
-            ===================================== */
-
-            const submitButton =
-                contactForm.querySelector(
+            const cvSubmitButton =
+                cvForm.querySelector(
                     'button[type="submit"]'
                 );
 
@@ -394,30 +718,25 @@ Thank you.`;
                BUTTON LOADING
             ===================================== */
 
-            if (submitButton) {
+            if (cvSubmitButton) {
 
-                submitButton.classList.add("loading");
+                cvSubmitButton.disabled = true;
 
-                submitButton.disabled = true;
+                cvSubmitButton.textContent =
+                    "Opening WhatsApp...";
 
             }
 
 
             /* =====================================
-               SHOW SUCCESS MESSAGE
+               SUCCESS MESSAGE
             ===================================== */
 
-            showFormMessage(
-                "Opening WhatsApp...",
+            showMessage(
+                cvFormMessage,
+                "Opening WhatsApp with your CV details...",
                 "success"
             );
-
-
-            /* =====================================
-               MARK AS SUBMITTED
-            ===================================== */
-
-            formSubmitted = true;
 
 
             /* =====================================
@@ -426,20 +745,21 @@ Thank you.`;
 
             setTimeout(() => {
 
-                /*
-                 * Same tab par WhatsApp open hoga.
-                 *
-                 * Mobile:
-                 * WhatsApp App / WhatsApp Web
-                 *
-                 * Desktop:
-                 * WhatsApp Web / Desktop
-                 */
+                openWhatsApp(
+                    cvWhatsappMessage
+                );
 
-                window.location.href =
-                    whatsappURL;
 
-            }, 300);
+                if (cvSubmitButton) {
+
+                    cvSubmitButton.disabled = false;
+
+                    cvSubmitButton.textContent =
+                        "Send CV Request on WhatsApp";
+
+                }
+
+            }, 200);
 
         }
     );
@@ -448,109 +768,7 @@ Thank you.`;
 
 
 /* =========================================
-   FORM MESSAGE HELPER
-========================================= */
-
-function showFormMessage(
-    message,
-    type = "success"
-) {
-
-    if (!formMessage) return;
-
-
-    formMessage.textContent =
-        message;
-
-
-    if (type === "error") {
-
-        formMessage.style.color =
-            "#f87171";
-
-    } else {
-
-        formMessage.style.color =
-            "#86efac";
-
-    }
-
-}
-
-
-/* =========================================
-   SCROLL REVEAL ANIMATION
-========================================= */
-
-const revealElements =
-    document.querySelectorAll(
-        `
-        .service-card,
-        .process-step,
-        .project-card,
-        .feature,
-        .contact-form-wrapper,
-        .tool-card,
-        .cv-card,
-        .pricing-card,
-        .business-card
-        `
-    );
-
-
-if ("IntersectionObserver" in window) {
-
-    const revealObserver =
-        new IntersectionObserver(
-            (entries, observer) => {
-
-                entries.forEach((entry) => {
-
-                    if (entry.isIntersecting) {
-
-                        entry.target.style.opacity =
-                            "1";
-
-                        entry.target.style.transform =
-                            "translateY(0)";
-
-                        observer.unobserve(
-                            entry.target
-                        );
-
-                    }
-
-                });
-
-            },
-            {
-                threshold: 0.12
-            }
-        );
-
-
-    revealElements.forEach((element) => {
-
-        element.style.opacity =
-            "0";
-
-        element.style.transform =
-            "translateY(25px)";
-
-        element.style.transition =
-            "opacity 0.7s ease, transform 0.7s ease";
-
-        revealObserver.observe(
-            element
-        );
-
-    });
-
-}
-
-
-/* =========================================
-   PHONE NUMBER INPUT
+   PHONE INPUT - CONTACT FORM
 ========================================= */
 
 const phoneInput =
@@ -563,12 +781,34 @@ if (phoneInput) {
         "input",
         () => {
 
-            /*
-             * Sirf valid phone characters allow karo.
-             */
-
             phoneInput.value =
                 phoneInput.value.replace(
+                    /[^\d+\-\s()]/g,
+                    ""
+                );
+
+        }
+    );
+
+}
+
+
+/* =========================================
+   PHONE INPUT - CV FORM
+========================================= */
+
+const cvPhoneInput =
+    document.getElementById("cvPhone");
+
+
+if (cvPhoneInput) {
+
+    cvPhoneInput.addEventListener(
+        "input",
+        () => {
+
+            cvPhoneInput.value =
+                cvPhoneInput.value.replace(
                     /[^\d+\-\s()]/g,
                     ""
                 );
@@ -688,11 +928,84 @@ document
 
 
 /* =========================================
+   SCROLL REVEAL ANIMATION
+========================================= */
+
+const revealElements =
+    document.querySelectorAll(
+        `
+        .service-card,
+        .process-step,
+        .project-card,
+        .feature,
+        .contact-form-wrapper,
+        .tool-card,
+        .cv-card,
+        .pricing-card,
+        .business-card,
+        .analysis-card,
+        .analysis-feature
+        `
+    );
+
+
+if ("IntersectionObserver" in window) {
+
+    const revealObserver =
+        new IntersectionObserver(
+            (entries, observer) => {
+
+                entries.forEach((entry) => {
+
+                    if (entry.isIntersecting) {
+
+                        entry.target.style.opacity =
+                            "1";
+
+                        entry.target.style.transform =
+                            "translateY(0)";
+
+                        observer.unobserve(
+                            entry.target
+                        );
+
+                    }
+
+                });
+
+            },
+            {
+                threshold: 0.12
+            }
+        );
+
+
+    revealElements.forEach((element) => {
+
+        element.style.opacity =
+            "0";
+
+        element.style.transform =
+            "translateY(25px)";
+
+        element.style.transition =
+            "opacity 0.7s ease, transform 0.7s ease";
+
+        revealObserver.observe(
+            element
+        );
+
+    });
+
+}
+
+
+/* =========================================
    CONSOLE BRAND MESSAGE
 ========================================= */
 
 console.log(
-    "%cSmart Office & CV Solutions",
+    "%cSmartFix Business & Career Solutions",
     "color:#38bdf8;font-size:20px;font-weight:bold;"
 );
 
