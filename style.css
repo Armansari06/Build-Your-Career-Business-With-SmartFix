@@ -4703,24 +4703,14 @@ footer {
     }
 
 }
-/* DEVELOPER CREDIT - RESPONSIVE DESIGN */
 
-.developer-credit { width: 100%; box-sizing: border-box; text-align: center; padding: 20px 15px; background: #080d19; border-top: 1px solid rgba(56, 189, 248, 0.2); }
 
-.developer-credit p { margin: 0 auto; max-width: 100%; color: #94a3b8; font-size: 13px; font-weight: 500; line-height: 1.9; letter-spacing: 0.3px; overflow-wrap: break-word; }
+/* Minimal Website Developer Credit */
 
-.developer-credit span { display: inline-block; color: #38bdf8; font-weight: 800; text-shadow: 0 0 8px rgba(56, 189, 248, 0.15); transition: all 0.3s ease; }
+.developer-credit { width: 100%; box-sizing: border-box; text-align: center; padding: 10px 8px; margin: 0; background: #080d19; border-top: 1px solid rgba(255, 255, 255, 0.10); color: #8491a5; font-size: 10px; font-weight: 400; }
 
-.developer-credit span:hover { color: #ffffff; text-shadow: 0 0 12px rgba(56, 189, 248, 0.7); }
+.developer-credit .developer-name { color: #38bdf8; font-size: 11px; font-weight: 700; }
 
-/* MOBILE RESPONSIVE */
+@media (max-width: 480px) { .developer-credit { padding: 8px 5px; font-size: 9px; }
 
-@media screen and (max-width: 600px) {
-
-.developer-credit { padding: 18px 16px; }
-
-.developer-credit p { font-size: 12px; line-height: 2; letter-spacing: 0.2px; }
-
-.developer-credit span { display: block; margin-top: 3px; font-size: 15px; }
-
-}
+.developer-credit .developer-name { font-size: 10px; } }
